@@ -1,0 +1,23 @@
+{
+  "name": "devops-github-actions-frontend-deployment",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/Talentwunder/devops-github-actions-frontend-deployment.git",
+  "author": "Lukas <meusel.lukas@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@actions/core": "^1.2.4",
+    "@actions/exec": "^1.0.4",
+    "@actions/glob": "^0.1.0",
+    "@actions/io": "^1.0.2",
+    "aws-sdk": "^2.684.0",
+    "axios": "^0.19.2",
+    "form-data": "^3.0.0"
+  },
+  "devDependencies": {
+    "@zeit/ncc": "^0.22.3"
+  },
+  "scripts": {
+    "package": "ncc build index.js -o dist"
+  }
+}

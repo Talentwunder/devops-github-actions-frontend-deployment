@@ -1,0 +1,24 @@
+name: 'TW SaaS CloudFront Deployment'
+description: 'Deploy a new version of a frontend application to S3 and CloudFront'
+inputs:
+  distributionId:
+    description: 'The CloudFront distribution id that should be updated'
+    required: true
+  s3BucketName:
+    description: 'Bucket name where the application build should be synced to'
+    required: true
+  applicationUrl:
+    description: 'URL of how the application is reachable, e.g. "https://dev.talentwunder.com"'
+    required: true
+  environment:
+    description: 'The referenced environment for the deployment'
+    required: true
+  sentryProject:
+    description: 'Defines the name of the Sentry project, e.g. "saas-frontend"'
+    required: true
+  sentryPrefix:
+    description: 'Defines how a sentry release should be prefixed, e.g. "fe"'
+    required: true
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
