@@ -30,26 +30,33 @@ async function doesSentryReleaseExist(sentryVersion) {
                 Authorization: `Bearer ${SENTRY_API_TOKEN}`
             }
         });
+        console.log('There is already a release.');
         return true
     } catch (e) {
+        console.log('No release for version yet.', JSON.stringify(e));
         return false
     }
 }
 
 async function createSentryRelease(sentryProject, sentryVersion) {
     console.log('Creating a new release in Sentry for version', sentryVersion);
-    const response = await axios({
-        method: 'POST',
-        url: 'https://sentry.io/api/0/organizations/talentwunder/releases/',
-        headers: {
-            Authorization: `Bearer ${SENTRY_API_TOKEN}`
-        },
-        data: {
-            version: sentryVersion,
-            projects: [ sentryProject ],
-        }
-    })
-    console.log('Sentry release created', JSON.stringify(response.data, null, 2));
+    try {
+        const response = await axios({
+            method: 'POST',
+            url: 'https://sentry.io/api/0/organizations/talentwunder/releases/',
+            headers: {
+                Authorization: `Bearer ${SENTRY_API_TOKEN}`
+            },
+            data: {
+                version: sentryVersion,
+                projects: [ sentryProject ],
+            }
+        })
+        console.log('Sentry release created', JSON.stringify(response.data, null, 2));
+    } catch (e) {
+        console.error('Could not create release');
+        console.error(JSON.stringify(e));
+    }
 }
 
 /**
