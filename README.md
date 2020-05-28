@@ -11,7 +11,7 @@ The version will be pulled from the `version` prop in `package.json`.
 
 **Required** The CloudFront distribution id that should be updated
 
-### `s3BucketName`
+### `bucketName`
 
 **Required** Bucket name where the application build should be synced to
 
@@ -41,7 +41,7 @@ Supported values:
 uses: Talentwunder/devops-github-actions-frontend-deployment@master
 with:
   distributionId: 'abcdefg'
-  s3BucketName: 'app.talentwunder.com'
+  bucketName: 'app.talentwunder.com'
   applicationUrl: 'app.talentwunder.com'
   environment: 'prod'
   sentryProject: 'my-sentry-project-name'
