@@ -4,7 +4,7 @@ inputs:
   distributionId:
     description: 'The CloudFront distribution id that should be updated'
     required: true
-  s3BucketName:
+  bucketName:
     description: 'Bucket name where the application build should be synced to'
     required: true
   applicationUrl:
