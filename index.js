@@ -90,7 +90,7 @@ async function uploadSentrySourceMaps(sentryProject, sentryVersion, applicationU
     for await (const file of globber.globGenerator()) {
         console.log('File: ', file);
         const formData = new FormData();
-        formData.append('file', fs.readFileSync(file, 'utf8'));
+        formData.append('file', fs.createReadStream(file));
         formData.append('name', `/static/js/${file}"`)
 
         try {
@@ -100,7 +100,8 @@ async function uploadSentrySourceMaps(sentryProject, sentryVersion, applicationU
                 headers: {
                     Authorization: `Bearer ${SENTRY_API_TOKEN}`,
                     ...formData.getHeaders()
-                }
+                },
+                data: formData
             })
         } catch (e) {
             console.error('Failed to upload source map\n', JSON.stringify(e));
