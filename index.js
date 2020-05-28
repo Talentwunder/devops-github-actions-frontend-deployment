@@ -64,16 +64,21 @@ async function createSentryRelease(sentryProject, sentryVersion) {
  * @param sentryVersion {string}
  * @return {Promise<void>}
  */
-async function deleteReleaseInSentry(sentryVersion) {
-    console.log('Deleting release in sentry...');
-    await axios({
+async function deleteReleaseFilesInSentry(sentryVersion) {
+    console.log('Listing files...');
+    const { data: files } = await axios({
+        method: 'GET',
+        url: `https://sentry.io/api/0/organizations/talentwunder/releases/${sentryVersion}/files`,
+    })
+    console.log('Deleting a total of', files.length, 'files...');
+    await Promise.all(files.map(file => axios({
         method: 'DELETE',
-        url: `https://sentry.io/api/0/organizations/talentwunder/releases/${sentryVersion}/`,
+        url: `https://sentry.io/api/0/organizations/talentwunder/releases/${sentryVersion}/files/${file.id}/`,
         headers: {
             Authorization: `Bearer ${SENTRY_API_TOKEN}`
         }
-    });
-    console.log('Release deleted.');
+    })))
+    console.log('Release files deleted!');
 }
 
 /**
@@ -189,7 +194,7 @@ async function run() {
 
         const hasRelease = await doesSentryReleaseExist(sentryVersion);
         if (hasRelease) {
-            await deleteReleaseInSentry(sentryVersion);
+            await deleteReleaseFilesInSentry(sentryVersion);
         }
         await createSentryRelease(sentryProject, sentryVersion)
         await uploadSentrySourceMaps(sentryProject, sentryVersion);
