@@ -185,7 +185,7 @@ async function run() {
         console.log('Sentry project: ', sentryProject);
 
         console.log('Reading version from "package.json"');
-        const version = require(path.resolve('package.json')).version;
+        const version = JSON.parse(fs.readFileSync('package.json', 'utf8')).version;
         console.log('Version: ', version);
 
         const sentryVersion = getSentryVersion(sentryVersionPrefix, version, environment);
