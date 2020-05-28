@@ -104,6 +104,7 @@ async function uploadSentrySourceMaps(sentryProject, sentryVersion, applicationU
             })
         } catch (e) {
             console.error('Failed to upload source map\n', JSON.stringify(e));
+            throw e
         }
         console.log('Source map uploaded: ', file);
         await io.rmRF(file)
