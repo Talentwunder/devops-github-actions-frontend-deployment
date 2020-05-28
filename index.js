@@ -91,7 +91,7 @@ async function uploadSentrySourceMaps(sentryProject, sentryVersion, applicationU
         console.log('File: ', file);
         const formData = new FormData();
         formData.append('file', fs.readFileSync(file, 'utf8'));
-        formData.append('name', `${applicationUrl}/static/js/${file}"`)
+        formData.append('name', `/static/js/${file}"`)
 
         try {
             await axios({
