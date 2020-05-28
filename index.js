@@ -69,6 +69,9 @@ async function deleteReleaseFilesInSentry(sentryVersion) {
     const { data: files } = await axios({
         method: 'GET',
         url: `https://sentry.io/api/0/organizations/talentwunder/releases/${sentryVersion}/files/`,
+        headers: {
+            Authorization: `Bearer ${SENTRY_API_TOKEN}`
+        }
     })
     console.log('Deleting a total of', files.length, 'files...');
     await Promise.all(files.map(file => axios({
