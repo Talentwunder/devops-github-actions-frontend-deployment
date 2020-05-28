@@ -2,6 +2,7 @@ const core = require('@actions/core');
 const exec = require('@actions/exec');
 const glob = require('@actions/glob');
 const io = require('@actions/io');
+const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
 const { CloudFront } = require('aws-sdk');
@@ -20,22 +21,26 @@ function getSentryVersion(prefix, version, environment) {
  * @return {Promise<boolean>}
  */
 async function doesSentryReleaseExist(sentryVersion) {
-    const response = await axios({
-        method: 'GET',
-        url: `https://sentry.io/api/0/organizations/talentwunder/releases/${sentryVersion}`,
-        headers: {
-            Authorization: `Bearer ${SENTRY_API_TOKEN}`
-        }
-    });
-
-    return true;
+    console.log('Checking if release in sentry exists');
+    try {
+        await axios({
+            method: 'GET',
+            url: `https://sentry.io/api/0/organizations/talentwunder/releases/${sentryVersion}/`,
+            headers: {
+                Authorization: `Bearer ${SENTRY_API_TOKEN}`
+            }
+        });
+        return true
+    } catch (e) {
+        return false
+    }
 }
 
 async function createSentryRelease(sentryProject, sentryVersion) {
     console.log('Creating a new release in Sentry for version', sentryVersion);
     const response = await axios({
         method: 'POST',
-        url: 'https://sentry.io/api/0/organizations/talentwunder/releases',
+        url: 'https://sentry.io/api/0/organizations/talentwunder/releases/',
         headers: {
             Authorization: `Bearer ${SENTRY_API_TOKEN}`
         },
@@ -56,7 +61,7 @@ async function deleteReleaseInSentry(sentryVersion) {
     console.log('Deleting release in sentry...');
     await axios({
         method: 'DELETE',
-        url: `https://sentry.io/api/0/organizations/talentwunder/releases/${sentryVersion}`,
+        url: `https://sentry.io/api/0/organizations/talentwunder/releases/${sentryVersion}/`,
         headers: {
             Authorization: `Bearer ${SENTRY_API_TOKEN}`
         }
@@ -80,9 +85,9 @@ async function uploadSentrySourceMaps(sentryProject, sentryVersion, applicationU
         formData.append('file', fs.readFileSync(file));
         formData.append('name', `${applicationUrl}/static/js/${file}"`)
 
-        const response = await axios({
+        await axios({
             method: 'POST',
-            url: `https://sentry.io/api/0/projects/talentwunder/${sentryProject}/releases/${sentryVersion}/files`,
+            url: `https://sentry.io/api/0/projects/talentwunder/${sentryProject}/releases/${sentryVersion}/files/`,
             headers: {
                 Authorization: `Bearer ${SENTRY_API_TOKEN}`,
                 ...formData.getHeaders()
@@ -106,7 +111,7 @@ async function syncS3Bucket(bucketName, version) {
     const bucketPath = `${bucketName}/v${version}`;
     console.log('Destination S3 is located at: ', bucketPath);
 
-    await exec.exec(`aws s3 sync build/ s3://${bucketPath} --delete --exclude index.html`)
+    await exec.exec(`aws s3 sync build/ s3://${bucketPath} --delete --exclude index.html`);
     console.log('Files uploaded.');
 
     await exec.exec(`aws s3 cp build/index.html s3://${bucketPath}/index.html --metadata-directive REPLACE --cache-control max-age=0,no-cache,no-store,must-revalidate --content-type text/html`)
@@ -135,7 +140,7 @@ async function updateCloudFrontDistribution(distributionId, version) {
     const { DistributionConfig, ETag } = await getCloudFrontDistributionConfig(distributionId);
     console.log(JSON.stringify(DistributionConfig, null, 2));
 
-    console.log('Adjusting the orgin path to account for the new version');
+    console.log('Adjusting the origin path to account for the new version');
     DistributionConfig.Origins.Items[0].OriginPath = `/v${version}`;
 
     console.log('Updating the distribution...');
