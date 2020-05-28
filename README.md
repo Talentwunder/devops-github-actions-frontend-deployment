@@ -38,7 +38,6 @@ uses: Talentwunder/devops-github-actions-frontend-deployment@master
 with:
   distributionId: 'abcdefg'
   bucketName: 'app.talentwunder.com'
-  applicationUrl: 'app.talentwunder.com'
   environment: 'prod'
   sentryProject: 'my-sentry-project-name'
   sentryPrefix: 'fe'
