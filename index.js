@@ -93,14 +93,18 @@ async function uploadSentrySourceMaps(sentryProject, sentryVersion, applicationU
         formData.append('file', fs.readFileSync(file, 'utf8'));
         formData.append('name', `${applicationUrl}/static/js/${file}"`)
 
-        await axios({
-            method: 'POST',
-            url: `https://sentry.io/api/0/projects/talentwunder/${sentryProject}/releases/${sentryVersion}/files/`,
-            headers: {
-                Authorization: `Bearer ${SENTRY_API_TOKEN}`,
-                ...formData.getHeaders()
-            }
-        })
+        try {
+            await axios({
+                method: 'POST',
+                url: `https://sentry.io/api/0/projects/talentwunder/${sentryProject}/releases/${sentryVersion}/files/`,
+                headers: {
+                    Authorization: `Bearer ${SENTRY_API_TOKEN}`,
+                    ...formData.getHeaders()
+                }
+            })
+        } catch (e) {
+            console.error('Failed to upload source map\n', JSON.stringify(e));
+        }
         console.log('Source map uploaded: ', file);
         await io.rmRF(file)
         console.log('Source map removed');
