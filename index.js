@@ -33,7 +33,7 @@ async function doesSentryReleaseExist(sentryVersion) {
         console.log('There is already a release.');
         return true
     } catch (e) {
-        console.log('No release for version yet.', JSON.stringify(e));
+        console.log('No release for version yet.', e.message);
         return false
     }
 }
@@ -88,8 +88,9 @@ async function uploadSentrySourceMaps(sentryProject, sentryVersion, applicationU
     const globber = await glob.create(path.resolve('build/static/js/*.js.map'))
 
     for await (const file of globber.globGenerator()) {
+        console.log('File: ', file);
         const formData = new FormData();
-        formData.append('file', fs.readFileSync(file));
+        formData.append('file', fs.readFileSync(file, 'utf8'));
         formData.append('name', `${applicationUrl}/static/js/${file}"`)
 
         await axios({
