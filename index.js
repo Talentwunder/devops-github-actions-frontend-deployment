@@ -80,10 +80,9 @@ async function deleteReleaseInSentry(sentryVersion) {
  *
  * @param sentryProject {string}
  * @param sentryVersion {string}
- * @param applicationUrl {string}
  * @return {Promise<void>}
  */
-async function uploadSentrySourceMaps(sentryProject, sentryVersion, applicationUrl) {
+async function uploadSentrySourceMaps(sentryProject, sentryVersion) {
     console.log('Uploading source maps to Sentry...');
     const globber = await glob.create(path.resolve('build/static/js/*.js.map'))
 
@@ -173,14 +172,12 @@ async function run() {
 
         const cloudFrontDistributionId = core.getInput('distributionId');
         const s3BucketName = core.getInput('bucketName');
-        const applicationUrl = core.getInput('applicationUrl')
         const environment = core.getInput('environment');
         const sentryProject = core.getInput('sentryProject');
         const sentryVersionPrefix = core.getInput('sentryPrefix');
 
         console.log('Distribution ID: ', cloudFrontDistributionId);
         console.log('Bucket name: ', s3BucketName);
-        console.log('Application is hosted at: ', applicationUrl);
         console.log('Environment: ', environment);
         console.log('Sentry project: ', sentryProject);
 
@@ -195,7 +192,7 @@ async function run() {
             await deleteReleaseInSentry(sentryVersion);
         }
         await createSentryRelease(sentryProject, sentryVersion)
-        await uploadSentrySourceMaps(sentryProject, sentryVersion, applicationUrl);
+        await uploadSentrySourceMaps(sentryProject, sentryVersion);
 
         await syncS3Bucket(s3BucketName, version);
         await updateCloudFrontDistribution(cloudFrontDistributionId, version);

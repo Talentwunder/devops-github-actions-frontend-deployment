@@ -7,9 +7,6 @@ inputs:
   bucketName:
     description: 'Bucket name where the application build should be synced to'
     required: true
-  applicationUrl:
-    description: 'URL of how the application is reachable, e.g. "https://dev.talentwunder.com"'
-    required: true
   environment:
     description: 'The referenced environment for the deployment'
     required: true

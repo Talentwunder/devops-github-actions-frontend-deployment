@@ -15,10 +15,6 @@ The version will be pulled from the `version` prop in `package.json`.
 
 **Required** Bucket name where the application build should be synced to
 
-### `applicationUrl`
-
-**Required** URL of how the application is reachable, e.g. "https://dev.talentwunder.com"
-
 ### `environment`
 
 **Required** The referenced environment for the deployment
