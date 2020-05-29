@@ -1,5 +1,8 @@
 # TW S3 & CloudFront Deployment GitHub Action 
 
+**Disclaimer**
+If you want to update the code in `index.js`, make sure to commit the bundle as well after running `yarn package`.
+
 This action syncs the `build` folder to S3, updates the CloudFront distribution and 
 creates a new release on Sentry.
 
