@@ -108,7 +108,9 @@ async function uploadSentrySourceMaps(sentryProject, sentryVersion) {
                     Authorization: `Bearer ${SENTRY_API_TOKEN}`,
                     ...formData.getHeaders()
                 },
-                data: formData
+                data: formData,
+                maxContentLength: Infinity,
+                maxBodyLength: Infinity,
             })
         } catch (e) {
             console.error('Failed to upload source map\n', JSON.stringify(e));
