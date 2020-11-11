@@ -92,7 +92,7 @@ async function deleteReleaseFilesInSentry(sentryVersion) {
  */
 async function uploadSentrySourceMaps(sentryProject, sentryVersion) {
     console.log('Uploading source maps to Sentry...');
-    const globber = await glob.create(path.resolve('build/static/js/*.js.map'))
+    const globber = await glob.create(path.resolve('sourcemaps/*.js.map'))
 
     for await (const file of globber.globGenerator()) {
         console.log('File: ', file);
@@ -117,8 +117,6 @@ async function uploadSentrySourceMaps(sentryProject, sentryVersion) {
             throw e
         }
         console.log('Source map uploaded: ', file);
-        await io.rmRF(file)
-        console.log('Source map removed');
     }
 }
 
